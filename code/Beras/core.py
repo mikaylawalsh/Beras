@@ -238,8 +238,9 @@ class GradientTape:
         while queue:
             q = queue.pop(0)
             print("here")
-            print(np.array(q).shape)
+            print(self.prevs[id(q)])
             # q is Tensor -- need it to be of type Diffable - does this have to do with my dense testing issue?
+            # does bias use inputs or weights? -- need to iterate through sources? 
             for i, g in zip(q.inputs, q.compose_to_input()):
                 if Tensor.requires_grad:  # need? change?
                     if getattr(i, "requires_grad", False):
@@ -251,6 +252,7 @@ class GradientTape:
                     if getattr(p, "requires_grad", False):
                         grads.update(p, g)
 
+            # how do we update sources
             for n in self.prevs[q]:
                 if n not in visited:
                     queue.append(n)
