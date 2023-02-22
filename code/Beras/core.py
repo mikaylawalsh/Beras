@@ -239,8 +239,9 @@ class GradientTape:
             q = queue.pop(0)
             print("here")
             print(q)
-            print(Tensor(q))
-            for i, g in zip(q.inputs, q.compose_to_input()): # q is Tensor??
+            print(Diffable(q))
+            # q is Tensor -- need it to be of type Diffable
+            for i, g in zip(q.inputs, q.compose_to_input()):
                 if Tensor.requires_grad:  # need? change?
                     if getattr(i, "requires_grad", False):
                         # i think i need something with id...
