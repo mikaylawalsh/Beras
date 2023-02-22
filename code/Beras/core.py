@@ -237,17 +237,17 @@ class GradientTape:
 
         while queue:
             q = queue.pop(0)
-            print("here")
-            print(self.prevs[id(q)])
+            lay = self.prevs[id(q)]
+            print(sources)
             # q is Tensor -- need it to be of type Diffable - does this have to do with my dense testing issue?
             # does bias use inputs or weights? -- need to iterate through sources? 
-            for i, g in zip(q.inputs, q.compose_to_input()):
+            for i, g in zip(lay.inputs, lay.compose_to_input()):
                 if Tensor.requires_grad:  # need? change?
                     if getattr(i, "requires_grad", False):
                         # i think i need something with id...
                         grads.update(i, g)
                     # need to backprop? i dont think we need backward() ?
-            for (_, p), g in zip(enumerate(q.weights()), q.compose_to_weight()):
+            for (_, p), g in zip(enumerate(lay.weights()), lay.compose_to_weight()):
                 if Tensor.requires_grad:
                     if getattr(p, "requires_grad", False):
                         grads.update(p, g)
