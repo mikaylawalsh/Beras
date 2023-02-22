@@ -237,7 +237,7 @@ class GradientTape:
 
         while queue:
             q = queue.pop(0)
-            for i, g in zip(q.inputs, q.compose_to_input()):
+            for i, g in zip(q.inputs, q.compose_to_input()): # q is Tensor??
                 if Tensor.requires_grad:  # need? change?
                     if getattr(i, "requires_grad", False):
                         # i think i need something with id...
