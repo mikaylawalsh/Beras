@@ -25,12 +25,16 @@ class OneHotEncoder(Callable):
         """
         ## TODO: Fetch all the unique labels and create a dictionary with
         ## the unique labels as keys and their one hot encodings as values
-        pass
+        self.uniq = np.unique(data)
+        self.vecs = np.eye(len(self.uniq))
+        self.uniq2oh = {e : self.vecs[i] for i, e in enumerate(self.uniq)}
 
     def call(self, data):
         ## TODO: Implement call function
-        pass
+        if not hasattr(self, 'uniq2oh'): self.fit(data)
+        return np.array([self.uniq2oh[x] for x in data])
 
     def inverse(self, data):
         ## TODO: Implement inverse function
-        pass
+        assert hasattr(self, 'uniq'), 'call() or fit() must be called before attempting to invert'
+        return np.array([self.uniq[x == 1][0] for x in data])

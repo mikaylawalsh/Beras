@@ -17,18 +17,34 @@ class SequentialModel(Beras.Model):
     def call(self, inputs):
         """Forward pass in sequential model. It's helpful to note that layers are initialized in Beras.Model, and
         you can refer to them with self.layers. You can call a layer by doing var = layer(input)."""
-        ## TODO: What does it mean to call the model?
-        ## HINT: Beras_Intro...
-        pass
+        # TODO: What does it mean to call the model?
+        # HINT: Beras_Intro...
+        x = np.copy(inputs)
+        for layer in self.layers:
+            x = layer(x)
+        return x
 
     def batch_step(self, x, y, training=True):
         """Computes loss and accuracy for a batch. This step consists of both a forward and backward pass.
         If training=false, don't apply gradients to update the model! Most of this method (, loss, applying gradients)
         will take place within the scope of Beras.GradientTape()"""
-        ## TODO: Compute loss and accuracy for a batch. Return as a dictionary
-        ## If training, then also update the gradients according to the optimizer
-        ## HINT: Beras_Intro...
-        pass
+        # TODO: Compute loss and accuracy for a batch. Return as a dictionary
+        # If training, then also update the gradients according to the optimizer
+        # HINT: Beras_Intro...
+
+        # check training or not?? 
+        
+        with Beras.GradientTape() as tape:
+            logits = self.call(x)
+            loss = self.compiled_loss(y, logits)
+        
+        if training:
+            grads = tape.gradient(loss, self.trainable_weights)
+            self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
+    
+        self.compiled_acc.update_state(y, logits)
+
+        return {m.name: m.result() for m in self.metrics}
 
 
 def get_simplest_model_components():
@@ -54,7 +70,7 @@ def get_simplest_model_components():
     )
     return SimpleNamespace(model=model, epochs=10, batch_size=256)
 
-    
+
 def get_simple_model_components():
     """
     Returns a simple model to satisfy 1470 portion.
@@ -62,13 +78,13 @@ def get_simple_model_components():
     :return: model
     """
 
-    ## TODO: Create, compile, and return model. 
-    ## Rquirements: 
-    ## - Multiple layers
-    ## - LeakyRelu intermediate activation & sigmoid terminal activation
-    ## - Adam or RMSProp optimizer, MSE Loss, and Categorical Accuracy. 
-    
-    ## Default model provided 
+    # TODO: Create, compile, and return model.
+    # Rquirements:
+    # - Multiple layers
+    # - LeakyRelu intermediate activation & sigmoid terminal activation
+    # - Adam or RMSProp optimizer, MSE Loss, and Categorical Accuracy.
+
+    # Default model provided
 
     from Beras.activations import LeakyReLU, Sigmoid
     from Beras.layers import Dense
@@ -95,7 +111,7 @@ def get_advanced_model_components():
     Returns a multi-layered model with more involved components.
     """
 
-    ## TODO: Implement a similar model, but make sure to use Softmax and CategoricalCrossentropy
+    # TODO: Implement a similar model, but make sure to use Softmax and CategoricalCrossentropy
     model = None
     return SimpleNamespace(model=model, epochs=10, batch_size=256)
 
@@ -107,25 +123,25 @@ if __name__ == "__main__":
     from Beras.onehot import OneHotEncoder
     from preprocess import load_and_preprocess_data
 
-    ## Read in MNIST data,
+    # Read in MNIST data,
     train_inputs, train_labels, test_inputs, test_labels = load_and_preprocess_data()
 
-    ## Read in MNIST data, use the OneHotEncoder class to one hot encode the labels,
-    ## instantiate and compile your model, and train your model
+    # Read in MNIST data, use the OneHotEncoder class to one hot encode the labels,
+    # instantiate and compile your model, and train your model
     ohe = OneHotEncoder()
     concat_labels = np.concatenate([train_labels, test_labels], axis=-1)
     ohe.fit(concat_labels)
 
-    ## Threshold of accuracy:
-    ##  1470: >95% on testing accuracy from get_simple_model_components
-    ##  2470: >95% on testing accuracy from get_advanced_model_components + 1470 req
+    # Threshold of accuracy:
+    # 1470: >95% on testing accuracy from get_simple_model_components
+    # 2470: >95% on testing accuracy from get_advanced_model_components + 1470 req
     arg_comps = [
-        get_simplest_model_components(),  ## Simple starter option. Not graded
+        get_simplest_model_components(),  # Simple starter option. Not graded
         # get_simple_model_components(),    ## 1470-required model; >95% accuracy
         # get_advanced_model_components()   ## 2470-required model; >95% accuracy
     ]
     for args in arg_comps:
-        
+
         train_agg_metrics = args.model.fit(
             train_inputs,
             ohe(train_labels),
@@ -133,12 +149,13 @@ if __name__ == "__main__":
             batch_size=args.batch_size
         )
 
-        ## Feel free to use the visualize_metrics function to view your accuracy and loss.
-        ## The final accuracy returned during evaluation must be > 80%.
+        # Feel free to use the visualize_metrics function to view your accuracy and loss.
+        # The final accuracy returned during evaluation must be > 80%.
 
         # from visualize import visualize_images, visualize_metrics
         # visualize_metrics(train_agg_metrics["loss"], train_agg_metrics["acc"])
         # visualize_images(model, train_inputs, ohe(train_labels))
 
-        test_agg_metrics = args.model.evaluate(test_inputs, ohe(test_labels), batch_size=100)
+        test_agg_metrics = args.model.evaluate(
+            test_inputs, ohe(test_labels), batch_size=100)
         print("Testing Performance:", test_agg_metrics)

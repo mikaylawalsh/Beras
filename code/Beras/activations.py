@@ -3,55 +3,108 @@ import numpy as np
 from .core import Diffable
 
 ################################################################################
-## Intermediate Activations To Put Between Layers
+# Intermediate Activations To Put Between Layers
+
 
 class LeakyReLU(Diffable):
 
-    ## TODO: Implement for default intermediate activation.
+    # TODO: Implement for default intermediate activation.
 
     def __init__(self, alpha=0.3):
         self.alpha = alpha
 
     def call(self, x):
         """Leaky ReLu forward propagation!"""
-        pass ## TODO
+        # TODO
+        # not sure if this is correct
+
+        ret = np.copy(x)
+        for i in range(len(x)):
+            for j in range(len(x[i])):
+                for k in range(len(x[i][j])):
+                    if x[i][j][k] > 0:
+                        ret[i][j][k] = x[i][j][k]
+                    else:
+                        ret[i][j][k] = self.alpha*x[i][j][k]
+        return ret
 
     def input_gradients(self):
         """Leaky ReLu backpropagation!"""
-        pass ## TODO
+        # TODO
+
+        # why is 0 in expected output?
+        # quad for loop can't be right...?
+
+        x = np.array(self.inputs)
+
+        grad = np.copy(x)
+        for i in range(len(x)):
+            for j in range(len(x[i])):
+                for k in range(len(x[i][j])):
+                    for l in range(len(x[i][j][k])):
+                        if x[i][j][k][l] > 0:
+                            grad[i][j][k][l] = 1
+                        elif x[i][j][k][l] == 0:
+                            grad[i][j][k][l] = 0
+                        else:
+                            grad[i][j][k][l] = self.alpha
+        return grad
+
+    def compose_to_input(self, J):
+        return self.input_gradients()[0] * J
 
 
 class ReLU(LeakyReLU):
-    ## GIVEN: Just shows that relu is a degenerate case of the LeakyReLU
+    # GIVEN: Just shows that relu is a degenerate case of the LeakyReLU
     def __init__(self):
         super().__init__(alpha=0)
 
 
 ################################################################################
-## Output Activations For Probability-Space Outputs
+# Output Activations For Probability-Space Outputs
 
 class Sigmoid(Diffable):
-    
-    ## TODO: Implement for default output activation to bind output to 0-1
-    
+
+    # TODO: Implement for default output activation to bind output to 0-1
+
+    # need to fix to account for x as more than one value?
+
     def call(self, x):
-        pass ## TODO
+        # TODO
+
+        ret = np.copy(x)
+        for i in range(len(x)):
+            for j in range(len(x[i])):
+                for k in range(len(x[i][j])):
+                    1/(1+np.exp(-x[i][j][k]))
+        return ret
 
     def input_gradients(self):
-        pass ## TODO
+        # TODO
+        x = np.array(self.inputs)
+
+        grad = np.copy(x)
+        for i in range(len(x)):
+            for j in range(len(x[i])):
+                for k in range(len(x[i][j])):
+                    for l in range(len(x[i][j][k])):
+                        np.exp(-x[i][j][k][l])/(1+np.exp(-x[i][j][k][l]))**2
+        return grad
+
+    def compose_to_input(self, J):
+        return self.input_gradients()[0] * J
 
 
 class Softmax(Diffable):
 
-    ## TODO [2470]: Implement for default output activation to bind output to 0-1
+    # TODO [2470]: Implement for default output activation to bind output to 0-1
 
     def call(self, x):
         """Softmax forward propagation!"""
-        ## HINT: Use stable softmax, which subtracts maximum from
-        ## all entries to prevent overflow/underflow issues
-        pass ## TODO
+        # HINT: Use stable softmax, which subtracts maximum from
+        # all entries to prevent overflow/underflow issues
+        pass  # TODO
 
     def input_gradients(self):
         """Softmax input gradients!"""
-        pass ## TODO
-
+        pass  # TODO

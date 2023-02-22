@@ -6,7 +6,8 @@ from .core import Diffable, Variable
 class Dense(Diffable):
 
     def __init__(self, input_size, output_size, initializer="kaiming"):
-        self.w, self.b = self.__class__._initialize_weight(initializer, input_size, output_size)
+        self.w, self.b = self.__class__._initialize_weight(
+            initializer, input_size, output_size)
 
     @property
     def weights(self):
@@ -64,5 +65,20 @@ class Dense(Diffable):
 
         # TODO: Implement remaining options (normal, xavier, kaiming initializations) for w_init.
         # Note that strings must be exactly as written in the assert above
+        if initializer == "xavier":
+            stddev = (2 / (input_size + output_size))**(.5)
+            w_init = np.random.normal(0, stddev, io_size)
+
+        if initializer == "kaiming":
+            stddev = (2 / input_size)**(.5)
+            w_init = np.random.normal(0, stddev, io_size)
+
+        if initializer == "xavier uniform":
+            limit = (6 / (input_size + output_size))**(.5)
+            w_init = np.random.uniform(-limit, limit, io_size)
+
+        if initializer == "kaiming uniform":
+            limit = (6 / input_size)**(.5)
+            w_init = np.random.uniform(-limit, limit, io_size)
 
         return Variable(w_init), Variable(b_init)
