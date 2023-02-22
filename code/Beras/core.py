@@ -238,7 +238,7 @@ class GradientTape:
         while queue:
             q = queue.pop(0)
             print("here")
-            print(q.shape)
+            print(np.array(q).shape)
             # q is Tensor -- need it to be of type Diffable - does this have to do with my dense testing issue?
             for i, g in zip(q.inputs, q.compose_to_input()):
                 if Tensor.requires_grad:  # need? change?
