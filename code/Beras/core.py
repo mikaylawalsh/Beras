@@ -233,30 +233,29 @@ class GradientTape:
         queue = [target]
         # Grads to be recorded. Initialize to None
         grads = defaultdict(lambda: None)
-        visited = [target]
+        visited = [target] # change this to be id 
 
         while queue:
             q = queue.pop(0)
-            lay = self.prevs[id(q)]
-            print(sources)
-            # q is Tensor -- need it to be of type Diffable - does this have to do with my dense testing issue?
-            # does bias use inputs or weights? -- need to iterate through sources? 
-            for i, g in zip(lay.inputs, lay.compose_to_input()):
-                if Tensor.requires_grad:  # need? change?
-                    if getattr(i, "requires_grad", False):
-                        # i think i need something with id...
-                        grads.update(i, g)
-                    # need to backprop? i dont think we need backward() ?
-            for (_, p), g in zip(enumerate(lay.weights()), lay.compose_to_weight()):
-                if Tensor.requires_grad:
-                    if getattr(p, "requires_grad", False):
-                        grads.update(p, g)
-
-            # how do we update sources
-            for n in self.prevs[q]:
-                if n not in visited:
-                    queue.append(n)
-                    visited.append(n)
+            # self.prevs[id(lay.inputs[i])]
+            if id(q) in self.prevs.keys():
+                lay = self.prevs[id(q)]
+                old = grads[id(q)]
+                for i, g in zip(lay.inputs, lay.compose_to_input(old)):
+                    #grads.update({id(i), g})
+                    grads[id(i)] = [g]
+                    queue.append(i)
+                for (_, p), g in zip(enumerate(lay.weights), lay.compose_to_weight(old)):
+                    #grads.update({id(p), g})
+                    grads[id(p)] = [g]
+                    queue.append(p)
+                
+            
+            # i think the issue is here!
+            # for n in lay.inputs:
+            #     cur = id(n)
+            #     if cur not in visited:
+            #         visited.append(cur)
 
         # Retrieve the sources and make sure that all of the sources have been reached
         out_grads = [grads[id(source)][0] for source in sources]

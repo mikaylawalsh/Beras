@@ -32,19 +32,20 @@ class SequentialModel(Beras.Model):
         # If training, then also update the gradients according to the optimizer
         # HINT: Beras_Intro...
 
-        # check training or not?? 
-        
+        # check training or not??
+
         with Beras.GradientTape() as tape:
             logits = self.call(x)
             loss = self.compiled_loss(y, logits)
-        
-        if training:
-            grads = tape.gradient(loss, self.trainable_weights)
-            self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
-    
-        self.compiled_acc.update_state(y, logits)
 
-        return {m.name: m.result() for m in self.metrics}
+            if training:
+                grads = tape.gradient(loss, self.trainable_weights)
+                self.optimizer.apply_gradients(self.trainable_weights, grads)
+
+        met = self.compiled_acc(y, logits)
+
+        # print loss and accuracy?
+        return met
 
 
 def get_simplest_model_components():
