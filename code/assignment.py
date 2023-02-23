@@ -19,7 +19,7 @@ class SequentialModel(Beras.Model):
         you can refer to them with self.layers. You can call a layer by doing var = layer(input)."""
         # TODO: What does it mean to call the model?
         # HINT: Beras_Intro...
-        x = np.copy(inputs)
+        x = inputs
         for layer in self.layers:
             x = layer(x)
         return x
@@ -45,7 +45,7 @@ class SequentialModel(Beras.Model):
         accuracy = self.compiled_acc(y, logits)
 
         # print loss and accuracy?
-        return {"loss": loss, "accuracy": accuracy}
+        return {"loss": loss, "acc": accuracy}
 
 
 def get_simplest_model_components():
