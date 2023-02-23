@@ -233,7 +233,6 @@ class GradientTape:
         queue = [target]
         # Grads to be recorded. Initialize to None
         grads = defaultdict(lambda: None)
-        visited = [target] # change this to be id 
 
         while queue:
             q = queue.pop(0)
@@ -250,12 +249,6 @@ class GradientTape:
                     grads[id(p)] = [g]
                     queue.append(p)
                 
-            
-            # i think the issue is here!
-            # for n in lay.inputs:
-            #     cur = id(n)
-            #     if cur not in visited:
-            #         visited.append(cur)
 
         # Retrieve the sources and make sure that all of the sources have been reached
         out_grads = [grads[id(source)][0] for source in sources]

@@ -42,10 +42,10 @@ class SequentialModel(Beras.Model):
                 grads = tape.gradient(loss, self.trainable_weights)
                 self.optimizer.apply_gradients(self.trainable_weights, grads)
 
-        met = self.compiled_acc(y, logits)
+        accuracy = self.compiled_acc(y, logits)
 
         # print loss and accuracy?
-        return met
+        return {"loss": loss, "accuracy": accuracy}
 
 
 def get_simplest_model_components():

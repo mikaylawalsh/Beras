@@ -18,36 +18,40 @@ class LeakyReLU(Diffable):
         # TODO
         # not sure if this is correct
 
-        ret = np.copy(x)
-        for i in range(len(x)):
-            for j in range(len(x[i])):
-                for k in range(len(x[i][j])):
-                    if x[i][j][k] > 0:
-                        ret[i][j][k] = x[i][j][k]
-                    else:
-                        ret[i][j][k] = self.alpha*x[i][j][k]
+        # ret = np.copy(x)
+        # for i in range(len(x)):
+        #     for j in range(len(x[i])):
+        #         for k in range(len(x[i][j])):
+        #             if x[i][j][k] > 0:
+        #                 ret[i][j][k] = x[i][j][k]
+        #             else:
+        #                 ret[i][j][k] = self.alpha*x[i][j][k]
+        
+        ret = np.where(x > 0, x, x*self.alpha)
         return ret
 
     def input_gradients(self):
         """Leaky ReLu backpropagation!"""
         # TODO
 
-        # why is 0 in expected output?
-        # quad for loop can't be right...?
-
         x = np.array(self.inputs)
-
         grad = np.copy(x)
-        for i in range(len(x)):
-            for j in range(len(x[i])):
-                for k in range(len(x[i][j])):
-                    for l in range(len(x[i][j][k])):
-                        if x[i][j][k][l] > 0:
-                            grad[i][j][k][l] = 1
-                        elif x[i][j][k][l] == 0:
-                            grad[i][j][k][l] = 0
-                        else:
-                            grad[i][j][k][l] = self.alpha
+
+        grad[x>0] = 1
+        grad[x==0] = 0
+        grad[x<0] = self.alpha
+
+        # grad = np.copy(x)
+        # for i in range(len(x)):
+        #     for j in range(len(x[i])):
+        #         for k in range(len(x[i][j])):
+        #             for l in range(len(x[i][j][k])):
+        #                 if x[i][j][k][l] > 0:
+        #                     grad[i][j][k][l] = 1
+        #                 elif x[i][j][k][l] == 0:
+        #                     grad[i][j][k][l] = 0
+        #                 else:
+        #                     grad[i][j][k][l] = self.alpha
         return grad
 
     def compose_to_input(self, J):
@@ -72,23 +76,31 @@ class Sigmoid(Diffable):
     def call(self, x):
         # TODO
 
-        ret = np.copy(x)
-        for i in range(len(x)):
-            for j in range(len(x[i])):
-                for k in range(len(x[i][j])):
-                    1/(1+np.exp(-x[i][j][k]))
+        # ret = np.copy(x)
+        # for i in range(len(x)):
+        #     for j in range(len(x[i])):
+        #         for k in range(len(x[i][j])):
+                    
+        # return ret
+
+        ret = 1/(1+np.exp(-x))
         return ret
+
+
 
     def input_gradients(self):
         # TODO
         x = np.array(self.inputs)
 
         grad = np.copy(x)
-        for i in range(len(x)):
-            for j in range(len(x[i])):
-                for k in range(len(x[i][j])):
-                    for l in range(len(x[i][j][k])):
-                        np.exp(-x[i][j][k][l])/(1+np.exp(-x[i][j][k][l]))**2
+        # for i in range(len(x)):
+        #     for j in range(len(x[i])):
+        #         for k in range(len(x[i][j])):
+        #             for l in range(len(x[i][j][k])):
+                        
+        # return grad
+
+        grad = np.exp(-x)/(1+np.exp(-x))**2
         return grad
 
     def compose_to_input(self, J):
