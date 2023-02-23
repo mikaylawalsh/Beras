@@ -16,9 +16,9 @@ def load_and_preprocess_data():
     # TODO: Flatten (reshape) and normalize the inputs
     # Hint: train and test inputs are numpy arrays so you can use np methods on them!
     train_inputs = train_inputs.reshape(-1,
-                                        train_inputs.shape[1]*train_inputs.shape[2])
+                                        train_inputs.shape[1]*train_inputs.shape[2]) / 255
     test_inputs = test_inputs.reshape(-1,
-                                      test_inputs.shape[1]*test_inputs.shape[2])
+                                      test_inputs.shape[1]*test_inputs.shape[2]) / 255
 
     # TODO: Convert all of the data into Tensors. The constructor is already
     # written for you in Beras/core.py and we import it in line 3

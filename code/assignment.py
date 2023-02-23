@@ -36,7 +36,7 @@ class SequentialModel(Beras.Model):
 
         with Beras.GradientTape() as tape:
             logits = self.call(x)
-            loss = self.compiled_loss(y, logits)
+            loss = self.compiled_loss(logits, y)
 
             if training:
                 grads = tape.gradient(loss, self.trainable_weights)
@@ -137,8 +137,8 @@ if __name__ == "__main__":
     # 1470: >95% on testing accuracy from get_simple_model_components
     # 2470: >95% on testing accuracy from get_advanced_model_components + 1470 req
     arg_comps = [
-        get_simplest_model_components(),  # Simple starter option. Not graded
-        # get_simple_model_components(),    ## 1470-required model; >95% accuracy
+        # get_simplest_model_components(),  # Simple starter option. Not graded
+        get_simple_model_components(),  # 1470-required model; >95% accuracy
         # get_advanced_model_components()   ## 2470-required model; >95% accuracy
     ]
     for args in arg_comps:
