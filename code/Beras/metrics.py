@@ -11,7 +11,6 @@ class CategoricalAccuracy(Callable):
         # HINT: Argmax + boolean mask via '=='
 
         accurate = 0
-        # where/how to use boolean mask?
         for i in range(len(probs)):
             if np.argmax(probs[i]) == np.argmax(labels[i]):
                 accurate += 1
