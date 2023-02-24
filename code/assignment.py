@@ -94,9 +94,9 @@ def get_simple_model_components():
     from Beras.optimizers import Adam
 
     model = SequentialModel([
-        Dense(784, 42, initializer="xavier uniform"),
+        Dense(784, 100, initializer="xavier uniform"),
         LeakyReLU(),
-        Dense(42, 10, initializer="xavier uniform"),
+        Dense(100, 10, initializer="xavier uniform"),
         Sigmoid(),
     ])
     model.compile(
