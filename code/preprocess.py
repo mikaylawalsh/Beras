@@ -22,7 +22,7 @@ def load_and_preprocess_data():
 
     # TODO: Convert all of the data into Tensors. The constructor is already
     # written for you in Beras/core.py and we import it in line 3
-    train_inputs = Tensor(train_inputs)  # wrap in variable??
+    train_inputs = Tensor(train_inputs)
     train_labels = Tensor(train_labels)
     test_inputs = Tensor(test_inputs)
     test_labels = Tensor(test_labels)

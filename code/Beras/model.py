@@ -49,16 +49,16 @@ class Model(Diffable):
         for layer in self.layers:
             weights += layer.weights
         return weights
-                 
+
     def compile(self, optimizer, loss_fn, acc_fn):
         """
         "Compile" the model by taking in the optimizers, loss, and accuracy functions.
         In more optimized DL implementations, this will have more involved processes
         that make the components extremely efficient but very inflexible.
         """
-        self.optimizer      = optimizer
-        self.compiled_loss  = loss_fn
-        self.compiled_acc   = acc_fn
+        self.optimizer = optimizer
+        self.compiled_loss = loss_fn
+        self.compiled_acc = acc_fn
 
     def fit(self, x, y, epochs, batch_size):
         """
@@ -71,7 +71,8 @@ class Model(Diffable):
             epoch_metrics = defaultdict(lambda: [])
             for b, b1 in enumerate(range(batch_size, x.shape[0] + 1, batch_size)):
                 b0 = b1 - batch_size
-                batch_metrics = self.batch_step(x[b0:b1], y[b0:b1], training=True)
+                batch_metrics = self.batch_step(
+                    x[b0:b1], y[b0:b1], training=True)
                 update_metric_dict(epoch_metrics, batch_metrics)
                 print_stats(batch_metrics, b, batch_num, e)
             update_metric_dict(agg_metrics, epoch_metrics)
@@ -88,14 +89,17 @@ class Model(Diffable):
         NOTE: This method is almost identical to fit (think about how training and testing differ --
         the core logic should be the same)
         """
-        ## TODO: Implement evaluate similarly to fit. Try to match the printing/aggregation logic. 
+        # TODO: Implement evaluate similarly to fit. Try to match the printing/aggregation logic.
         agg_metrics = defaultdict(lambda: [])
         batch_num = x.shape[0] // batch_size
         for b, b1 in enumerate(range(batch_size, x.shape[0] + 1, batch_size)):
             b0 = b1 - batch_size
             batch_metrics = self.batch_step(x[b0:b1], y[b0:b1], training=False)
-            update_metric_dict(batch_metrics, agg_metrics) #append to aggregate metrics 
+            # append to aggregate metrics
+            update_metric_dict(agg_metrics, batch_metrics)
             print_stats(batch_metrics, b, batch_num)
+        agg_metrics = {k: np.mean(v) for (k, v) in agg_metrics.items()}
+        # update_metric_dict(agg_metrics, agg_metrics) #??
         print_stats(agg_metrics, avg=True)
         return agg_metrics
 

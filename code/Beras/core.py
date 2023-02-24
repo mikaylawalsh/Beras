@@ -236,16 +236,13 @@ class GradientTape:
 
         while queue:
             q = queue.pop(0)
-            # self.prevs[id(lay.inputs[i])]
             if id(q) in self.prevs.keys():
                 lay = self.prevs[id(q)]
                 old = grads[id(q)]
                 for i, g in zip(lay.inputs, lay.compose_to_input(old)):
-                    #grads.update({id(i), g})
                     grads[id(i)] = [g]
                     queue.append(i)
                 for (_, p), g in zip(enumerate(lay.weights), lay.compose_to_weight(old)):
-                    #grads.update({id(p), g})
                     grads[id(p)] = [g]
                     queue.append(p)
                 
