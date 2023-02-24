@@ -94,9 +94,9 @@ def get_simple_model_components():
     from Beras.optimizers import Adam
 
     model = SequentialModel([
-        Dense(784, 40, initializer="xavier"),
+        Dense(784, 100, initializer="xavier"),
         LeakyReLU(),
-        Dense(40, 10, initializer="xavier"),
+        Dense(100, 10, initializer="xavier"),
         Sigmoid(),
     ])
     model.compile(
@@ -104,7 +104,7 @@ def get_simple_model_components():
         loss_fn=MeanSquaredError(),
         acc_fn=CategoricalAccuracy(),
     )
-    return SimpleNamespace(model=model, epochs=10, batch_size=256)  # 10
+    return SimpleNamespace(model=model, epochs=10, batch_size=175)  # 10
 
 
 def get_advanced_model_components():
