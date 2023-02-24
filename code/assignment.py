@@ -100,11 +100,11 @@ def get_simple_model_components():
         Sigmoid(),
     ])
     model.compile(
-        optimizer=Adam(0.004),  # .0016
+        optimizer=Adam(0.005),  # .0016
         loss_fn=MeanSquaredError(),
         acc_fn=CategoricalAccuracy(),
     )
-    return SimpleNamespace(model=model, epochs=20, batch_size=150)  # 10
+    return SimpleNamespace(model=model, epochs=10, batch_size=256)  # 10
 
 
 def get_advanced_model_components():
