@@ -100,7 +100,7 @@ def get_simple_model_components():
         Sigmoid(),
     ])
     model.compile(
-        optimizer=Adam(0.01),  # .0016
+        optimizer=Adam(0.005),  # .0016
         loss_fn=MeanSquaredError(),
         acc_fn=CategoricalAccuracy(),
     )
