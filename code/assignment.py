@@ -104,7 +104,7 @@ def get_simple_model_components():
         loss_fn=MeanSquaredError(),
         acc_fn=CategoricalAccuracy(),
     )
-    return SimpleNamespace(model=model, epochs=10, batch_size=150)  # 10
+    return SimpleNamespace(model=model, epochs=20, batch_size=150)  # 10
 
 
 def get_advanced_model_components():
